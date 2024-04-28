@@ -10,7 +10,7 @@ const { Connection } = require("./config/db.js");
 const PORT = process.env.PORT || 9000;
 
 const app = express();
-app.use(cors({ origin: "http://localhost:9050", credentials: true }));
+app.use(cors({ origin: process.env.PROJECT_URL, credentials: true }));
 
 app.use(express.json());
 
