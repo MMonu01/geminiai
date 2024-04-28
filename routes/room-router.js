@@ -1,15 +1,16 @@
-import express from "express";
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
+const express = require("express");
 
-import { roomModel, joinRoomModel } from "../model/room-model.js";
+const { roomModel, joinRoomModel } = require("../model/room-model.js");
+const { userModel } = require("../model/user-model.js");
 
-export const roomRouter = express.Router();
+const roomRouter = express.Router();
 
 roomRouter.post("/getrooms", async (req, res, next) => {
-  const user_email = req.user.email;
-  const { search } = req.body;
+  const { search, user_id } = req.body;
+  const user = await userModel.findOne({ _id: user_id });
 
-  const query_obj = { user_email };
+  const query_obj = { user_email: user.email };
 
   if (!!search) {
     query_obj.room_name = { $regex: search };
@@ -24,8 +25,11 @@ roomRouter.post("/getrooms", async (req, res, next) => {
 });
 
 roomRouter.post("/createroom", async (req, res, next) => {
-  const { room_name } = req.body;
-  const user_email = req.user.email;
+  const { room_name, user_id } = req.body;
+
+  const user = await userModel.findOne({ _id: user_id });
+  const user_email = user.email;
+
   try {
     const new_room = new roomModel({ room_name, creator_email: user_email });
     await new_room.save();
@@ -41,14 +45,18 @@ roomRouter.post("/createroom", async (req, res, next) => {
 });
 
 roomRouter.post("/joinroom", async (req, res, next) => {
-  const { room_id } = req.body;
+  const { room_id, user_id } = req.body;
+
+  const user = await userModel.findOne({ _id: user_id });
+  const user_email = user.email;
+
   try {
     const room = await roomModel.findOne({ _id: new mongoose.Types.ObjectId(room_id) });
     if (!!room) {
-      const is_user_joined = await joinRoomModel.findOne({ user_email: req.user.email, room_id });
+      const is_user_joined = await joinRoomModel.findOne({ user_email, room_id });
 
       if (!is_user_joined) {
-        const join_obj = { room_id, user_email: req.user.email, room_name: room.room_name };
+        const join_obj = { room_id, user_email, room_name: room.room_name };
         const new_join = new joinRoomModel(join_obj);
         new_join.save();
         res.send({ ok: true, room_id, room_name: room.room_name });
@@ -62,3 +70,5 @@ roomRouter.post("/joinroom", async (req, res, next) => {
     next(err);
   }
 });
+
+module.exports = { roomRouter };

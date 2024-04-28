@@ -1,8 +1,8 @@
-import express from "express";
+const express = require("express");
 
-import { messageModel } from "../model/message-model.js";
+const { messageModel } = require("../model/message-model.js");
 
-export const messageRouter = express.Router();
+const messageRouter = express.Router();
 
 messageRouter.post("/getmessages", async (req, res, next) => {
   try {
@@ -13,3 +13,5 @@ messageRouter.post("/getmessages", async (req, res, next) => {
     next(err);
   }
 });
+
+module.exports = { messageRouter };

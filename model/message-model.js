@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 const messageSchema = new mongoose.Schema({
   date: { type: Date, default: new Date() },
@@ -9,4 +9,6 @@ const messageSchema = new mongoose.Schema({
   username: { type: String, required: true },
 });
 
-export const messageModel = mongoose.model("message", messageSchema);
+const messageModel = mongoose.model("message", messageSchema);
+
+module.exports = { messageModel };

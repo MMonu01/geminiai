@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 const roomSchema = new mongoose.Schema({
   date: { type: Date, default: new Date() },
@@ -12,5 +12,7 @@ const joinRoomSchema = new mongoose.Schema({
   room_name: { type: String, required: true },
 });
 
-export const roomModel = mongoose.model("room", roomSchema);
-export const joinRoomModel = mongoose.model("join_room", joinRoomSchema);
+const roomModel = mongoose.model("room", roomSchema);
+const joinRoomModel = mongoose.model("join_room", joinRoomSchema);
+
+module.exports = { roomModel, joinRoomModel };
