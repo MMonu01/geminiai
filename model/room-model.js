@@ -7,9 +7,11 @@ const roomSchema = new mongoose.Schema({
 });
 
 const joinRoomSchema = new mongoose.Schema({
+  date: { type: Date, default: new Date() },
   room_id: { type: String, required: true },
   user_email: { type: String, required: true },
   room_name: { type: String, required: true },
+  preview: { type: String, required: true },
 });
 
 const roomModel = mongoose.model("room", roomSchema);
