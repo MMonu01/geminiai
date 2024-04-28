@@ -13,7 +13,7 @@ messageRouter.post("/getmessages", async (req, res, next) => {
 
     for (let i = 0; i < message_list.length; i++) {
       if (i == 0) {
-        const { date, user_email, user_avatar } = message_list[i];
+        const { date, user_email, user_avatar, username } = message_list[i];
 
         const message_obj = { date, user_email, user_avatar, username, messages: [{ message: message_list[i].message, date }] };
         new_message_list.push(message_obj);
@@ -28,7 +28,7 @@ messageRouter.post("/getmessages", async (req, res, next) => {
             new_message_list[x].messages = [{ message: message_list[i].message, date: message_list[i].date }];
           }
         } else {
-          const { date, user_email, user_avatar } = message_list[i];
+          const { date, user_email, user_avatar, username } = message_list[i];
           const message_obj = { date, user_email, user_avatar, username, messages: [{ message: message_list[i].message, date }] };
           new_message_list.push(message_obj);
         }
