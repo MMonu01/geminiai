@@ -1,31 +1,27 @@
-const { GoogleGenerativeAI } = require("@google/generative-ai");
-require("dotenv").config();
 const express = require("express");
-const markdownit = require("markdown-it");
+const cors = require("cors");
+require("dotenv").config();
+
+const { roomRouter } = require("./routes/room-router.js");
+const { messageRouter } = require("./routes/message-router.js");
+
+const { Connection } = require("./config/db.js");
+
+const PORT = process.env.PORT || 9000;
 
 const app = express();
+app.use(cors({ origin: "http://localhost:9050", credentials: true }));
+
 app.use(express.json());
 
-const port = 9000;
+app.use("/room", roomRouter);
+app.use("/message", messageRouter);
 
-app.post("/geminiai", (req, res, next) => {
-  const { question } = req.body;
-  const genAI = new GoogleGenerativeAI(process.env.gemini_api_key);
-
-  const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-
-  model
-    .generateContent([question])
-    .then((result) => {
-      const md = markdownit();
-      const response = md.render(result.response.text());
-      res.send({ response });
-    })
-    .catch((err) => {
-      next(err);
-    });
-});
-
-app.listen(port, () => {
-  console.log(`server is running at port ${port}`);
+Connection.then(() => {
+  console.log("connection to db successfull");
+  app.listen(PORT, () => {
+    console.log(`Server is running at port ${PORT}`);
+  });
+}).catch((err) => {
+  console.log("failed to connect to db", err);
 });
